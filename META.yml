@@ -26,4 +26,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: https://github.com/iakuf/mojolicious-plugin-serverstatus
-version: 0.01
+version: 0.02

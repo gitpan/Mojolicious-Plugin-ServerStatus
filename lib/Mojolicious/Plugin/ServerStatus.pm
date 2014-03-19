@@ -8,7 +8,7 @@ use JSON;
 use Fcntl qw(:DEFAULT :flock);
 use IO::Handle;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my $JSON = JSON->new->utf8(0);
 
@@ -68,7 +68,8 @@ sub register {
     $r->route($args->{path})->to(
         cb => sub {
             my $self = shift;
-            my $env = $self->req->env;
+            my $req = $self->req;
+            my $env = $req->env;
             my $tx  = $self->tx;
 
             if ( ! $plugin->allowed($tx->remote_address) ) {
@@ -77,7 +78,7 @@ sub register {
 
             my ($body, $status) = $plugin->_handle_server_status;
 
-            if ( ($env->{QUERY_STRING} || '') =~ m!\bjson\b!i ) {
+            if ( ($env->{QUERY_STRING} || $req->url->query->to_string ||'') =~ m!\bjson\b!i ) {
                 return $self->render(json => $status)
             }
             return  $self->render(text => $body, format => 'txt');
